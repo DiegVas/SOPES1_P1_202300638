@@ -1,15 +1,15 @@
 ** Contendores de alto consumo **
 
 - Elasticsearch -
-- mongoDB -
+- mongoDB - -------------
 - GitLab mcp -
 - RabbitMQ -
 - jupyter/base-notebook -
 
 ** Contedores de bajo consumo **
 
-- Nginx -
+- Nginx - ------
 - istio/distroless -
 - alpinelinux/docker-cli -
-- BusyBox -
+- BusyBox - -----
 - Redis -

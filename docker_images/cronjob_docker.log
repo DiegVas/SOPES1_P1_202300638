@@ -2860,3 +2860,416 @@
 [0;32m  ✓ redis:alpine3.22[0m
 [0;31mError: Faltan 7 imágenes. Por favor, descárgalas primero[0m
 [2025-12-07 21:18:02] ERROR: Faltan 7 imágenes
+[0;32m==========================================[0m
+[0;32m  Generador LIMITADO de Contenedores[0m
+[0;32m==========================================[0m
+
+[2025-12-07 23:07:01] === Inicio de generación de contenedores ===
+[1;33mContenedores actuales: 0
+0/50[0m
+[2025-12-07 23:07:01] Contenedores actuales: 0
+0
+[1;33mVerificando contenedores por edad...[0m
+permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
+/documentos/host_share/docker_images/generate_containers_limited.sh: línea 76: [: demasiados argumentos
+/documentos/host_share/docker_images/generate_containers_limited.sh: línea 219: 0
+0: error sintáctico en la expresión (el elemento de error es "0")
+[0;32m==========================================[0m
+[0;32m  Generador LIMITADO de Contenedores[0m
+[0;32m==========================================[0m
+
+[2025-12-07 23:08:01] === Inicio de generación de contenedores ===
+[1;33mContenedores actuales: 0
+0/50[0m
+[2025-12-07 23:08:01] Contenedores actuales: 0
+0
+[1;33mVerificando contenedores por edad...[0m
+permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
+/documentos/host_share/docker_images/generate_containers_limited.sh: línea 76: [: demasiados argumentos
+/documentos/host_share/docker_images/generate_containers_limited.sh: línea 219: 0
+0: error sintáctico en la expresión (el elemento de error es "0")
+Error: No se puede acceder a Docker
+[0;32m==========================================[0m
+[0;32m  Generador LIMITADO de Contenedores[0m
+[0;32m==========================================[0m
+
+[2025-12-07 23:10:01] === Inicio de generación de contenedores ===
+[1;33mContenedores actuales: 0
+0/50[0m
+[2025-12-07 23:10:01] Contenedores actuales: 0
+0
+[1;33mVerificando contenedores por edad...[0m
+/documentos/host_share/docker_images/generate_containers_limited.sh: línea 76: [: demasiados argumentos
+/documentos/host_share/docker_images/generate_containers_limited.sh: línea 219: 0
+0: error sintáctico en la expresión (el elemento de error es "0")
+[0;32m==========================================[0m
+[0;32m  Generador LIMITADO de Contenedores[0m
+[0;32m==========================================[0m
+
+[2025-12-07 23:12:01] === Inicio de generación de contenedores ===
+[1;33mContenedores actuales: 0
+0/50[0m
+[2025-12-07 23:12:01] Contenedores actuales: 0
+0
+[1;33mVerificando contenedores por edad...[0m
+/documentos/host_share/docker_images/generate_containers_limited.sh: línea 76: [: demasiados argumentos
+/documentos/host_share/docker_images/generate_containers_limited.sh: línea 219: 0
+0: error sintáctico en la expresión (el elemento de error es "0")
+[0;32m==========================================[0m
+[0;32m  Generador LIMITADO de Contenedores[0m
+[0;32m==========================================[0m
+
+[2025-12-07 23:13:01] === Inicio de generación de contenedores ===
+[1;33mContenedores actuales: 0
+0/50[0m
+[2025-12-07 23:13:01] Contenedores actuales: 0
+0
+[1;33mVerificando contenedores por edad...[0m
+/documentos/host_share/docker_images/generate_containers_limited.sh: línea 76: [: demasiados argumentos
+/documentos/host_share/docker_images/generate_containers_limited.sh: línea 219: 0
+0: error sintáctico en la expresión (el elemento de error es "0")
+[0;32m==========================================[0m
+[0;32m  Generador LIMITADO de Contenedores[0m
+[0;32m==========================================[0m
+
+[2025-12-07 23:14:01] === Inicio de generación de contenedores ===
+[1;33mContenedores actuales: 0/50[0m
+[2025-12-07 23:14:01] Contenedores actuales: 0
+[1;33mVerificando contenedores por edad...[0m
+
+[1;33mGenerando 10 contenedores nuevos...[0m
+
+[0;34m[1/10] Generando: busybox_unstable-uclibc_20251207_231402_3840[0m
+[2025-12-07 23:14:02] Generando contenedor 1: busybox_unstable-uclibc_20251207_231402_3840 (Bajo consumo - busybox:unstable-uclibc)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:14:02] SUCCESS: Contenedor busybox_unstable-uclibc_20251207_231402_3840 creado (busybox:unstable-uclibc)
+[0;34m[2/10] Generando: nginx_trixie-perl_20251207_231403_5929[0m
+[2025-12-07 23:14:03] Generando contenedor 2: nginx_trixie-perl_20251207_231403_5929 (Bajo consumo - nginx:trixie-perl)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:14:03] SUCCESS: Contenedor nginx_trixie-perl_20251207_231403_5929 creado (nginx:trixie-perl)
+[0;34m[3/10] Generando: nginx_trixie-perl_20251207_231404_2393[0m
+[2025-12-07 23:14:04] Generando contenedor 3: nginx_trixie-perl_20251207_231404_2393 (Bajo consumo - nginx:trixie-perl)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:14:04] SUCCESS: Contenedor nginx_trixie-perl_20251207_231404_2393 creado (nginx:trixie-perl)
+[0;34m[4/10] Generando: busybox_unstable-uclibc_20251207_231405_7938[0m
+[2025-12-07 23:14:05] Generando contenedor 4: busybox_unstable-uclibc_20251207_231405_7938 (Bajo consumo - busybox:unstable-uclibc)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:14:05] SUCCESS: Contenedor busybox_unstable-uclibc_20251207_231405_7938 creado (busybox:unstable-uclibc)
+[0;34m[5/10] Generando: nginx_trixie-perl_20251207_231406_6729[0m
+[2025-12-07 23:14:06] Generando contenedor 5: nginx_trixie-perl_20251207_231406_6729 (Bajo consumo - nginx:trixie-perl)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:14:06] SUCCESS: Contenedor nginx_trixie-perl_20251207_231406_6729 creado (nginx:trixie-perl)
+[0;34m[6/10] Generando: mongo_latest_20251207_231407_7426[0m
+[2025-12-07 23:14:07] Generando contenedor 6: mongo_latest_20251207_231407_7426 (Alto consumo - mongo:latest)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:14:07] SUCCESS: Contenedor mongo_latest_20251207_231407_7426 creado (mongo:latest)
+[0;34m[7/10] Generando: busybox_unstable-uclibc_20251207_231407_4411[0m
+[2025-12-07 23:14:07] Generando contenedor 7: busybox_unstable-uclibc_20251207_231407_4411 (Bajo consumo - busybox:unstable-uclibc)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:14:08] SUCCESS: Contenedor busybox_unstable-uclibc_20251207_231407_4411 creado (busybox:unstable-uclibc)
+[0;34m[8/10] Generando: nginx_trixie-perl_20251207_231409_1675[0m
+[2025-12-07 23:14:09] Generando contenedor 8: nginx_trixie-perl_20251207_231409_1675 (Bajo consumo - nginx:trixie-perl)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:14:09] SUCCESS: Contenedor nginx_trixie-perl_20251207_231409_1675 creado (nginx:trixie-perl)
+[0;34m[9/10] Generando: mongo_latest_20251207_231410_578[0m
+[2025-12-07 23:14:10] Generando contenedor 9: mongo_latest_20251207_231410_578 (Alto consumo - mongo:latest)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:14:10] SUCCESS: Contenedor mongo_latest_20251207_231410_578 creado (mongo:latest)
+[0;34m[10/10] Generando: nginx_trixie-perl_20251207_231411_434[0m
+[2025-12-07 23:14:11] Generando contenedor 10: nginx_trixie-perl_20251207_231411_434 (Bajo consumo - nginx:trixie-perl)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:14:12] SUCCESS: Contenedor nginx_trixie-perl_20251207_231411_434 creado (nginx:trixie-perl)
+
+[0;32m==========================================[0m
+[0;32m  Resumen de Generación[0m
+[0;32m==========================================[0m
+[0;32mContenedores creados: 10/10[0m
+[0;34mTotal en sistema: 10/50[0m
+[2025-12-07 23:14:13] === Fin: 10 exitosos, 0 fallidos, Total: 10 ===
+
+[0;34mPara ver los contenedores: docker ps[0m
+[0;34mPara ver estadísticas: docker stats[0m
+[0;32m==========================================[0m
+[0;32m  Generador LIMITADO de Contenedores[0m
+[0;32m==========================================[0m
+
+[2025-12-07 23:15:01] === Inicio de generación de contenedores ===
+[1;33mContenedores actuales: 10/50[0m
+[2025-12-07 23:15:01] Contenedores actuales: 10
+[1;33mVerificando contenedores por edad...[0m
+
+[1;33mGenerando 10 contenedores nuevos...[0m
+
+[0;34m[1/10] Generando: nginx_trixie-perl_20251207_231501_8925[0m
+[2025-12-07 23:15:01] Generando contenedor 1: nginx_trixie-perl_20251207_231501_8925 (Bajo consumo - nginx:trixie-perl)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:15:02] SUCCESS: Contenedor nginx_trixie-perl_20251207_231501_8925 creado (nginx:trixie-perl)
+[0;34m[2/10] Generando: nginx_trixie-perl_20251207_231502_1974[0m
+[2025-12-07 23:15:02] Generando contenedor 2: nginx_trixie-perl_20251207_231502_1974 (Bajo consumo - nginx:trixie-perl)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:15:03] SUCCESS: Contenedor nginx_trixie-perl_20251207_231502_1974 creado (nginx:trixie-perl)
+[0;34m[3/10] Generando: mongo_latest_20251207_231503_1689[0m
+[2025-12-07 23:15:03] Generando contenedor 3: mongo_latest_20251207_231503_1689 (Alto consumo - mongo:latest)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:15:04] SUCCESS: Contenedor mongo_latest_20251207_231503_1689 creado (mongo:latest)
+[0;34m[4/10] Generando: mongo_latest_20251207_231504_7168[0m
+[2025-12-07 23:15:04] Generando contenedor 4: mongo_latest_20251207_231504_7168 (Alto consumo - mongo:latest)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:15:05] SUCCESS: Contenedor mongo_latest_20251207_231504_7168 creado (mongo:latest)
+[0;34m[5/10] Generando: nginx_trixie-perl_20251207_231505_9530[0m
+[2025-12-07 23:15:05] Generando contenedor 5: nginx_trixie-perl_20251207_231505_9530 (Bajo consumo - nginx:trixie-perl)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:15:06] SUCCESS: Contenedor nginx_trixie-perl_20251207_231505_9530 creado (nginx:trixie-perl)
+[0;34m[6/10] Generando: nginx_trixie-perl_20251207_231506_4674[0m
+[2025-12-07 23:15:06] Generando contenedor 6: nginx_trixie-perl_20251207_231506_4674 (Bajo consumo - nginx:trixie-perl)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:15:08] SUCCESS: Contenedor nginx_trixie-perl_20251207_231506_4674 creado (nginx:trixie-perl)
+[0;34m[7/10] Generando: mongo_latest_20251207_231508_9240[0m
+[2025-12-07 23:15:08] Generando contenedor 7: mongo_latest_20251207_231508_9240 (Alto consumo - mongo:latest)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:15:09] SUCCESS: Contenedor mongo_latest_20251207_231508_9240 creado (mongo:latest)
+[0;34m[8/10] Generando: busybox_unstable-uclibc_20251207_231509_2208[0m
+[2025-12-07 23:15:09] Generando contenedor 8: busybox_unstable-uclibc_20251207_231509_2208 (Bajo consumo - busybox:unstable-uclibc)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:15:11] SUCCESS: Contenedor busybox_unstable-uclibc_20251207_231509_2208 creado (busybox:unstable-uclibc)
+[0;34m[9/10] Generando: nginx_trixie-perl_20251207_231512_1456[0m
+[2025-12-07 23:15:12] Generando contenedor 9: nginx_trixie-perl_20251207_231512_1456 (Bajo consumo - nginx:trixie-perl)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:15:13] SUCCESS: Contenedor nginx_trixie-perl_20251207_231512_1456 creado (nginx:trixie-perl)
+[0;34m[10/10] Generando: mongo_latest_20251207_231513_9957[0m
+[2025-12-07 23:15:13] Generando contenedor 10: mongo_latest_20251207_231513_9957 (Alto consumo - mongo:latest)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:15:15] SUCCESS: Contenedor mongo_latest_20251207_231513_9957 creado (mongo:latest)
+
+[0;32m==========================================[0m
+[0;32m  Resumen de Generación[0m
+[0;32m==========================================[0m
+[0;32mContenedores creados: 10/10[0m
+[0;34mTotal en sistema: 20/50[0m
+[2025-12-07 23:15:15] === Fin: 10 exitosos, 0 fallidos, Total: 20 ===
+
+[0;34mPara ver los contenedores: docker ps[0m
+[0;34mPara ver estadísticas: docker stats[0m
+[0;32m==========================================[0m
+[0;32m  Generador LIMITADO de Contenedores[0m
+[0;32m==========================================[0m
+
+[2025-12-07 23:16:01] === Inicio de generación de contenedores ===
+[1;33mContenedores actuales: 20/50[0m
+[2025-12-07 23:16:02] Contenedores actuales: 20
+[1;33mVerificando contenedores por edad... y categoria[0m
+
+[1;33mGenerando 10 contenedores nuevos...[0m
+
+[0;34m[1/10] Generando: mongo_latest_20251207_231602_8996[0m
+[2025-12-07 23:16:02] Generando contenedor 1: mongo_latest_20251207_231602_8996 (Alto consumo - mongo:latest)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:16:03] SUCCESS: Contenedor mongo_latest_20251207_231602_8996 creado (mongo:latest)
+[0;34m[2/10] Generando: nginx_trixie-perl_20251207_231603_9767[0m
+[2025-12-07 23:16:03] Generando contenedor 2: nginx_trixie-perl_20251207_231603_9767 (Bajo consumo - nginx:trixie-perl)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:16:05] SUCCESS: Contenedor nginx_trixie-perl_20251207_231603_9767 creado (nginx:trixie-perl)
+[0;34m[3/10] Generando: mongo_latest_20251207_231605_2608[0m
+[2025-12-07 23:16:05] Generando contenedor 3: mongo_latest_20251207_231605_2608 (Alto consumo - mongo:latest)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:16:06] SUCCESS: Contenedor mongo_latest_20251207_231605_2608 creado (mongo:latest)
+[0;34m[4/10] Generando: busybox_unstable-uclibc_20251207_231607_1723[0m
+[2025-12-07 23:16:07] Generando contenedor 4: busybox_unstable-uclibc_20251207_231607_1723 (Bajo consumo - busybox:unstable-uclibc)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:16:08] SUCCESS: Contenedor busybox_unstable-uclibc_20251207_231607_1723 creado (busybox:unstable-uclibc)
+[0;34m[5/10] Generando: mongo_latest_20251207_231609_869[0m
+[2025-12-07 23:16:09] Generando contenedor 5: mongo_latest_20251207_231609_869 (Alto consumo - mongo:latest)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:16:10] SUCCESS: Contenedor mongo_latest_20251207_231609_869 creado (mongo:latest)
+[0;34m[6/10] Generando: nginx_trixie-perl_20251207_231610_4496[0m
+[2025-12-07 23:16:10] Generando contenedor 6: nginx_trixie-perl_20251207_231610_4496 (Bajo consumo - nginx:trixie-perl)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:16:12] SUCCESS: Contenedor nginx_trixie-perl_20251207_231610_4496 creado (nginx:trixie-perl)
+[0;34m[7/10] Generando: busybox_unstable-uclibc_20251207_231613_5634[0m
+[2025-12-07 23:16:13] Generando contenedor 7: busybox_unstable-uclibc_20251207_231613_5634 (Bajo consumo - busybox:unstable-uclibc)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:16:14] SUCCESS: Contenedor busybox_unstable-uclibc_20251207_231613_5634 creado (busybox:unstable-uclibc)
+[0;34m[8/10] Generando: busybox_unstable-uclibc_20251207_231614_9562[0m
+[2025-12-07 23:16:14] Generando contenedor 8: busybox_unstable-uclibc_20251207_231614_9562 (Bajo consumo - busybox:unstable-uclibc)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:16:15] SUCCESS: Contenedor busybox_unstable-uclibc_20251207_231614_9562 creado (busybox:unstable-uclibc)
+[0;34m[9/10] Generando: nginx_trixie-perl_20251207_231615_6878[0m
+[2025-12-07 23:16:15] Generando contenedor 9: nginx_trixie-perl_20251207_231615_6878 (Bajo consumo - nginx:trixie-perl)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:16:16] SUCCESS: Contenedor nginx_trixie-perl_20251207_231615_6878 creado (nginx:trixie-perl)
+[0;34m[10/10] Generando: busybox_unstable-uclibc_20251207_231617_9094[0m
+[2025-12-07 23:16:17] Generando contenedor 10: busybox_unstable-uclibc_20251207_231617_9094 (Bajo consumo - busybox:unstable-uclibc)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:16:17] SUCCESS: Contenedor busybox_unstable-uclibc_20251207_231617_9094 creado (busybox:unstable-uclibc)
+
+[0;32m==========================================[0m
+[0;32m  Resumen de Generación[0m
+[0;32m==========================================[0m
+[0;32mContenedores creados: 10/10[0m
+[0;34mTotal en sistema: 30/50[0m
+[2025-12-07 23:16:19] === Fin: 10 exitosos, 0 fallidos, Total: 30 ===
+
+[0;34mPara ver los contenedores: docker ps[0m
+[0;34mPara ver estadísticas: docker stats[0m
+[0;32m==========================================[0m
+[0;32m  Generador LIMITADO de Contenedores[0m
+[0;32m==========================================[0m
+
+[2025-12-07 23:22:01] === Inicio de generación de contenedores ===
+[1;33mContenedores actuales: 0/15[0m
+[2025-12-07 23:22:01] Contenedores actuales: 0
+[1;33mVerificando contenedores por edad... y categoria[0m
+
+[1;33mGenerando 5 contenedores nuevos...[0m
+
+[0;34m[1/5] Generando: mongo_latest_20251207_232201_4724[0m
+[2025-12-07 23:22:01] Generando contenedor 1: mongo_latest_20251207_232201_4724 (Alto consumo - mongo:latest)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:22:01] SUCCESS: Contenedor mongo_latest_20251207_232201_4724 creado (mongo:latest)
+[0;34m[2/5] Generando: nginx_trixie-perl_20251207_232202_7815[0m
+[2025-12-07 23:22:02] Generando contenedor 2: nginx_trixie-perl_20251207_232202_7815 (Bajo consumo - nginx:trixie-perl)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:22:02] SUCCESS: Contenedor nginx_trixie-perl_20251207_232202_7815 creado (nginx:trixie-perl)
+[0;34m[3/5] Generando: mongo_latest_20251207_232203_928[0m
+[2025-12-07 23:22:03] Generando contenedor 3: mongo_latest_20251207_232203_928 (Alto consumo - mongo:latest)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:22:03] SUCCESS: Contenedor mongo_latest_20251207_232203_928 creado (mongo:latest)
+[0;34m[4/5] Generando: nginx_trixie-perl_20251207_232204_8285[0m
+[2025-12-07 23:22:04] Generando contenedor 4: nginx_trixie-perl_20251207_232204_8285 (Bajo consumo - nginx:trixie-perl)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:22:04] SUCCESS: Contenedor nginx_trixie-perl_20251207_232204_8285 creado (nginx:trixie-perl)
+[0;34m[5/5] Generando: busybox_unstable-uclibc_20251207_232205_4552[0m
+[2025-12-07 23:22:05] Generando contenedor 5: busybox_unstable-uclibc_20251207_232205_4552 (Bajo consumo - busybox:unstable-uclibc)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:22:05] SUCCESS: Contenedor busybox_unstable-uclibc_20251207_232205_4552 creado (busybox:unstable-uclibc)
+
+[0;32m==========================================[0m
+[0;32m  Resumen de Generación[0m
+[0;32m==========================================[0m
+[0;32mContenedores creados: 5/5[0m
+[0;34mTotal en sistema: 5/15[0m
+[2025-12-07 23:22:06] === Fin: 5 exitosos, 0 fallidos, Total: 5 ===
+
+[0;34mPara ver los contenedores: docker ps[0m
+[0;34mPara ver estadísticas: docker stats[0m
+[0;32m==========================================[0m
+[0;32m  Generador LIMITADO de Contenedores[0m
+[0;32m==========================================[0m
+
+[2025-12-07 23:23:01] === Inicio de generación de contenedores ===
+[1;33mContenedores actuales: 5/15[0m
+[2025-12-07 23:23:01] Contenedores actuales: 5
+[1;33mVerificando contenedores por edad... y categoria[0m
+
+[1;33mGenerando 5 contenedores nuevos...[0m
+
+[0;34m[1/5] Generando: busybox_unstable-uclibc_20251207_232301_5405[0m
+[2025-12-07 23:23:01] Generando contenedor 1: busybox_unstable-uclibc_20251207_232301_5405 (Bajo consumo - busybox:unstable-uclibc)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:23:02] SUCCESS: Contenedor busybox_unstable-uclibc_20251207_232301_5405 creado (busybox:unstable-uclibc)
+[0;34m[2/5] Generando: busybox_unstable-uclibc_20251207_232302_3543[0m
+[2025-12-07 23:23:02] Generando contenedor 2: busybox_unstable-uclibc_20251207_232302_3543 (Bajo consumo - busybox:unstable-uclibc)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:23:03] SUCCESS: Contenedor busybox_unstable-uclibc_20251207_232302_3543 creado (busybox:unstable-uclibc)
+[0;34m[3/5] Generando: busybox_unstable-uclibc_20251207_232303_5446[0m
+[2025-12-07 23:23:03] Generando contenedor 3: busybox_unstable-uclibc_20251207_232303_5446 (Bajo consumo - busybox:unstable-uclibc)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:23:03] SUCCESS: Contenedor busybox_unstable-uclibc_20251207_232303_5446 creado (busybox:unstable-uclibc)
+[0;34m[4/5] Generando: mongo_latest_20251207_232304_7816[0m
+[2025-12-07 23:23:04] Generando contenedor 4: mongo_latest_20251207_232304_7816 (Alto consumo - mongo:latest)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:23:04] SUCCESS: Contenedor mongo_latest_20251207_232304_7816 creado (mongo:latest)
+[0;34m[5/5] Generando: busybox_unstable-uclibc_20251207_232305_9044[0m
+[2025-12-07 23:23:05] Generando contenedor 5: busybox_unstable-uclibc_20251207_232305_9044 (Bajo consumo - busybox:unstable-uclibc)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:23:05] SUCCESS: Contenedor busybox_unstable-uclibc_20251207_232305_9044 creado (busybox:unstable-uclibc)
+
+[0;32m==========================================[0m
+[0;32m  Resumen de Generación[0m
+[0;32m==========================================[0m
+[0;32mContenedores creados: 5/5[0m
+[0;34mTotal en sistema: 10/15[0m
+[2025-12-07 23:23:06] === Fin: 5 exitosos, 0 fallidos, Total: 10 ===
+
+[0;34mPara ver los contenedores: docker ps[0m
+[0;34mPara ver estadísticas: docker stats[0m
+[0;32m==========================================[0m
+[0;32m  Generador LIMITADO de Contenedores[0m
+[0;32m==========================================[0m
+
+[2025-12-07 23:24:01] === Inicio de generación de contenedores ===
+[1;33mContenedores actuales: 10/15[0m
+[2025-12-07 23:24:01] Contenedores actuales: 10
+[1;33mVerificando contenedores por edad... y categoria[0m
+
+[1;33mGenerando 5 contenedores nuevos...[0m
+
+[0;34m[1/5] Generando: busybox_unstable-uclibc_20251207_232401_3977[0m
+[2025-12-07 23:24:01] Generando contenedor 1: busybox_unstable-uclibc_20251207_232401_3977 (Bajo consumo - busybox:unstable-uclibc)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:24:02] SUCCESS: Contenedor busybox_unstable-uclibc_20251207_232401_3977 creado (busybox:unstable-uclibc)
+[0;34m[2/5] Generando: mongo_latest_20251207_232402_6083[0m
+[2025-12-07 23:24:02] Generando contenedor 2: mongo_latest_20251207_232402_6083 (Alto consumo - mongo:latest)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:24:02] SUCCESS: Contenedor mongo_latest_20251207_232402_6083 creado (mongo:latest)
+[0;34m[3/5] Generando: nginx_trixie-perl_20251207_232403_6981[0m
+[2025-12-07 23:24:03] Generando contenedor 3: nginx_trixie-perl_20251207_232403_6981 (Bajo consumo - nginx:trixie-perl)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:24:03] SUCCESS: Contenedor nginx_trixie-perl_20251207_232403_6981 creado (nginx:trixie-perl)
+[0;34m[4/5] Generando: nginx_trixie-perl_20251207_232404_2561[0m
+[2025-12-07 23:24:04] Generando contenedor 4: nginx_trixie-perl_20251207_232404_2561 (Bajo consumo - nginx:trixie-perl)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:24:04] SUCCESS: Contenedor nginx_trixie-perl_20251207_232404_2561 creado (nginx:trixie-perl)
+[0;34m[5/5] Generando: nginx_trixie-perl_20251207_232405_3750[0m
+[2025-12-07 23:24:05] Generando contenedor 5: nginx_trixie-perl_20251207_232405_3750 (Bajo consumo - nginx:trixie-perl)
+[0;32m  ✓ Contenedor creado exitosamente[0m
+[2025-12-07 23:24:05] SUCCESS: Contenedor nginx_trixie-perl_20251207_232405_3750 creado (nginx:trixie-perl)
+
+[0;32m==========================================[0m
+[0;32m  Resumen de Generación[0m
+[0;32m==========================================[0m
+[0;32mContenedores creados: 5/5[0m
+[0;34mTotal en sistema: 15/15[0m
+[2025-12-07 23:24:06] === Fin: 5 exitosos, 0 fallidos, Total: 15 ===
+
+[0;34mPara ver los contenedores: docker ps[0m
+[0;34mPara ver estadísticas: docker stats[0m
+[0;32m==========================================[0m
+[0;32m  Generador LIMITADO de Contenedores[0m
+[0;32m==========================================[0m
+
+[2025-12-07 23:25:01] === Inicio de generación de contenedores ===
+[1;33mContenedores actuales: 15/15[0m
+[2025-12-07 23:25:01] Contenedores actuales: 15
+[1;33mVerificando contenedores por edad... y categoria[0m
+[1;33m⚠️  Límite alcanzado (15/15)[0m
+[2025-12-07 23:25:01] LÍMITE: 15 contenedores, eliminando los más antiguos...
+[1;33mEliminando 5 contenedores más antiguos...[0m
+[0;31m⚠️  No se pueden generar más contenedores (límite alcanzado)[0m
+[2025-12-07 23:25:02] LÍMITE: No se pueden generar más contenedores
+[0;32m==========================================[0m
+[0;32m  Generador LIMITADO de Contenedores[0m
+[0;32m==========================================[0m
+
+[2025-12-07 23:26:01] === Inicio de generación de contenedores ===
+[1;33mContenedores actuales: 15/15[0m
+[2025-12-07 23:26:01] Contenedores actuales: 15
+[1;33mVerificando contenedores por edad... y categoria[0m
+[1;33m⚠️  Límite alcanzado (15/15)[0m
+[2025-12-07 23:26:01] LÍMITE: 15 contenedores, eliminando los más antiguos...
+[1;33mEliminando 5 contenedores más antiguos...[0m
+[0;31m⚠️  No se pueden generar más contenedores (límite alcanzado)[0m
+[2025-12-07 23:26:01] LÍMITE: No se pueden generar más contenedores
+[0;32m==========================================[0m
+[0;32m  Generador LIMITADO de Contenedores[0m
+[0;32m==========================================[0m
+
+[2025-12-07 23:27:01] === Inicio de generación de contenedores ===
+[1;33mContenedores actuales: 15/15[0m
+[2025-12-07 23:27:01] Contenedores actuales: 15
+[1;33mVerificando contenedores por edad... y categoria[0m
+[1;33m⚠️  Límite alcanzado (15/15)[0m
+[2025-12-07 23:27:02] LÍMITE: 15 contenedores, eliminando los más antiguos...
+[1;33mEliminando 5 contenedores más antiguos...[0m
+[0;31m⚠️  No se pueden generar más contenedores (límite alcanzado)[0m
+[2025-12-07 23:27:02] LÍMITE: No se pueden generar más contenedores

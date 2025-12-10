@@ -9,8 +9,8 @@ import (
 )
 
 func main() {
-	// Obtener ruta absoluta del script
-	absPath, err := filepath.Abs("../docker_images/generate_containers.sh")
+	// Obtener ruta absoluta del script CON LÍMITES
+	absPath, err := filepath.Abs("../docker_images/generate_containers_limited.sh")
 	if err != nil {
 		log.Fatalf("Error obteniendo ruta absoluta: %v", err)
 	}
