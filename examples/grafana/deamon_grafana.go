@@ -20,7 +20,7 @@ type Container struct {
 	Status string
 }
 
-func main() {
+func main_daemon() {
 	rand.Seed(time.Now().UnixNano())
 
 	// Obtener directorio del ejecutable
