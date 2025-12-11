@@ -100,7 +100,7 @@ loop:
 		select {
 		case <-ticker.C:
 			// Este caso se ejecuta cada vez que el ticker genera un evento (cada 20 segundos).
-			lectura_sysinfo, err := leerProc("/proc/sysinfo")
+			lectura_sysinfo, err := leerProc("/proc/sysinfo_so1_202300638")
 			if err != nil {
 				fmt.Println(err)
 				return
@@ -173,12 +173,12 @@ func cargarModuloKernel() {
 
 	log.Println("Módulo del kernel cargado exitosamente")
 
-	// Verificar que el archivo /proc/sysinfo existe
+	// Verificar que el archivo /proc/sysinfo_so1_202300638 existe
 	time.Sleep(1 * time.Second) // Dar tiempo para que se cree el archivo
-	if _, err := os.Stat("/proc/sysinfo"); os.IsNotExist(err) {
-		log.Fatal("Error: /proc/sysinfo no fue creado después de cargar el módulo")
+	if _, err := os.Stat("/proc/sysinfo_so1_202300638"); os.IsNotExist(err) {
+		log.Fatal("Error: /proc/sysinfo_so1_202300638 no fue creado después de cargar el módulo")
 	}
-	log.Println("Archivo /proc/sysinfo verificado correctamente")
+	log.Println("Archivo /proc/sysinfo_so1_202300638 verificado correctamente")
 }
 
 func leerProc(ruta string) (map[string]interface{}, error) {
