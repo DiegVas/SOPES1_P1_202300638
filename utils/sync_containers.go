@@ -59,6 +59,20 @@ func SyncDockerContainers(db *sql.DB) error {
 	}
 
 	// Guardar contenedores eliminados antes de marcarlos como stopped
+	// OPTIMIZACIÓN: Obtener todos los contenedores de Docker de una sola vez
+	allDockerCmd := exec.Command("docker", "ps", "-a", "--format", "{{.ID}}")
+	allDockerOutput, err := allDockerCmd.Output()
+	dockerContainerIDs := make(map[string]bool)
+	if err == nil {
+		lines := strings.Split(string(allDockerOutput), "\n")
+		for _, line := range lines {
+			if id := strings.TrimSpace(line); id != "" {
+				dockerContainerIDs[id] = true
+			}
+		}
+	}
+	log.Printf("📊 Contenedores en Docker: %d", len(dockerContainerIDs))
+
 	// Buscar contenedores que están en la BD pero ya no en Docker
 	rows, err := db.Query(`
 		SELECT container_id, container_name, image_name, ram_usage, cpu_usage, created_at
@@ -69,7 +83,14 @@ func SyncDockerContainers(db *sql.DB) error {
 	if err != nil {
 		log.Printf("Error consultando contenedores para detectar eliminados: %v", err)
 	} else {
-		deletedCount := 0
+		// Primero recolectar todos los contenedores a eliminar
+		type containerToDelete struct {
+			id, name, image    string
+			ramUsage, cpuUsage float64
+			createdAt          int64
+		}
+		toDelete := []containerToDelete{}
+
 		for rows.Next() {
 			var containerID, containerName, imageName string
 			var ramUsage, cpuUsage float64
@@ -91,36 +112,47 @@ func SyncDockerContainers(db *sql.DB) error {
 				continue
 			}
 
-			// Verificar si el contenedor realmente fue eliminado de Docker
-			checkCmd := exec.Command("docker", "ps", "-a", "--filter", "id="+containerID, "--format", "{{.ID}}")
-			checkOutput, _ := checkCmd.Output()
-			containerStillExists := strings.TrimSpace(string(checkOutput)) != ""
+			// Verificar si el contenedor realmente fue eliminado de Docker (usando el mapa)
+			containerStillExists := dockerContainerIDs[containerID]
 
-			// Solo registrar como eliminado si ya no existe en Docker y aún no está en deleted_containers
+			// Solo registrar como eliminado si ya no existe en Docker
 			if !containerStillExists {
-				// Verificar que no esté ya registrado
-				var exists int
-				err := db.QueryRow(`SELECT COUNT(*) FROM deleted_containers WHERE container_id = ?`, containerID).Scan(&exists)
-				if err == nil && exists == 0 {
-					// Insertar en tabla de contenedores eliminados
-					_, err := db.Exec(`
-						INSERT INTO deleted_containers (container_id, container_name, image_name, deletion_reason, ram_usage, cpu_usage, created_at, deleted_at)
-						VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-					`, containerID, containerName, imageName, "Container removed from system", ramUsage, cpuUsage, createdAt, timestamp)
-
-					if err != nil {
-						log.Printf("Error guardando contenedor eliminado %s: %v", containerName, err)
-					} else {
-						deletedCount++
-						log.Printf("✓ Contenedor eliminado registrado: %s (%s)", containerName, containerID[:12])
-
-						// Eliminar de la tabla containers
-						db.Exec(`DELETE FROM containers WHERE container_id = ?`, containerID)
-					}
-				}
+				toDelete = append(toDelete, containerToDelete{
+					id:        containerID,
+					name:      containerName,
+					image:     imageName,
+					ramUsage:  ramUsage,
+					cpuUsage:  cpuUsage,
+					createdAt: createdAt,
+				})
 			}
 		}
 		rows.Close()
+
+		// Ahora procesar los contenedores a eliminar (fuera del loop de rows)
+		deletedCount := 0
+		for _, container := range toDelete {
+			// Verificar que no esté ya registrado
+			var exists int
+			err := db.QueryRow(`SELECT COUNT(*) FROM deleted_containers WHERE container_id = ?`, container.id).Scan(&exists)
+			if err == nil && exists == 0 {
+				// Insertar en tabla de contenedores eliminados
+				_, err := db.Exec(`
+					INSERT INTO deleted_containers (container_id, container_name, image_name, deletion_reason, ram_usage, cpu_usage, created_at, deleted_at)
+					VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+				`, container.id, container.name, container.image, "Container removed from system", container.ramUsage, container.cpuUsage, container.createdAt, timestamp)
+
+				if err != nil {
+					log.Printf("Error guardando contenedor eliminado %s: %v", container.name, err)
+				} else {
+					deletedCount++
+					log.Printf("✓ Contenedor eliminado registrado: %s (%s)", container.name, container.id[:12])
+
+					// Eliminar de la tabla containers
+					db.Exec(`DELETE FROM containers WHERE container_id = ?`, container.id)
+				}
+			}
+		}
 
 		if deletedCount > 0 {
 			log.Printf("✅ Registrados %d contenedores eliminados en deleted_containers", deletedCount)
