@@ -20,7 +20,6 @@ static const struct modversion_info ____versions[]
 __used __section("__versions") = {
 	{ 0x003b23f9, "single_open" },
 	{ 0xc7ffe1aa, "si_meminfo" },
-	{ 0x1df1459a, "vm_node_stat" },
 	{ 0xf2c4f3f1, "seq_printf" },
 	{ 0x2182515b, "__num_online_cpus" },
 	{ 0x058c185a, "jiffies" },
@@ -38,7 +37,6 @@ static const u32 ____version_ext_crcs[]
 __used __section("__version_ext_crcs") = {
 	0x003b23f9,
 	0xc7ffe1aa,
-	0x1df1459a,
 	0xf2c4f3f1,
 	0x2182515b,
 	0x058c185a,
@@ -55,7 +53,6 @@ static const char ____version_ext_names[]
 __used __section("__version_ext_names") =
 	"single_open\0"
 	"si_meminfo\0"
-	"vm_node_stat\0"
 	"seq_printf\0"
 	"__num_online_cpus\0"
 	"jiffies\0"
@@ -72,4 +69,4 @@ __used __section("__version_ext_names") =
 MODULE_INFO(depends, "");
 
 
-MODULE_INFO(srcversion, "8EC9DD2E120453ACD546418");
+MODULE_INFO(srcversion, "008E7E0EB5E87A82B8184BD");

@@ -22,13 +22,30 @@ MODULE_VERSION("1.0");
 static int sysinfo_show(struct seq_file *m, void *v)
 {
     struct sysinfo si;           // estructura que contiene la informacion de la memoria
-    unsigned long available_ram; // RAM disponible = freeram + bufferram + cache aproximado
+    unsigned long used_ram;      // RAM usada
+    unsigned long free_ram;      // RAM libre
+    unsigned long available_ram; // RAM disponible (libre + buffers)
 
     si_meminfo(&si); // obtiene la informacion de la memoria
 
-    // Calcular RAM disponible real (incluyendo buffers que pueden liberarse)
-    // Esta es una aproximación de lo que muestra el monitor del sistema
-    available_ram = (si.freeram + si.bufferram) * 4096;
+    // Calcular RAM disponible (lo que realmente está disponible para usar)
+    // Multiplicamos bufferram por 3 como estimación del caché liberatable
+    // Esto aproxima mejor lo que muestra el monitor del sistema
+    available_ram = (si.freeram + (si.bufferram * 3)) * 4096;
+
+    // RAM realmente libre (sin buffers ni caché)
+    free_ram = si.freeram * 4096;
+
+    // RAM usada = Total - Disponible (así es como lo calcula el monitor del sistema)
+    // Verificamos overflow
+    if (si.totalram > (si.freeram + (si.bufferram * 3)))
+    {
+        used_ram = (si.totalram - si.freeram - (si.bufferram * 3)) * 4096;
+    }
+    else
+    {
+        used_ram = 0;
+    }
 
     /*
         El seq_printf se encarga de escribir en el archivo en /proc
@@ -39,7 +56,9 @@ static int sysinfo_show(struct seq_file *m, void *v)
 
     seq_printf(m, "{\n");
     seq_printf(m, "  \"Totalram\": %lu,\n", si.totalram * 4096);
-    seq_printf(m, "  \"Freeram\": %lu,\n", available_ram);
+    seq_printf(m, "  \"Freeram\": %lu,\n", free_ram);
+    seq_printf(m, "  \"Available\": %lu,\n", available_ram);
+    seq_printf(m, "  \"Usedram\": %lu,\n", used_ram);
     seq_printf(m, "  \"Sharedram\": %lu,\n", si.sharedram * 4096);
     seq_printf(m, "  \"Bufferram\": %lu,\n", si.bufferram * 4096);
     seq_printf(m, "  \"Totalswap\": %lu,\n", si.totalswap * 4096);

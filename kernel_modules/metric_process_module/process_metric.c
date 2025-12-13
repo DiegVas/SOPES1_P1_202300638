@@ -25,6 +25,56 @@ MODULE_VERSION("1.0");
 #define PROC_NAME "continfo_so1_202300638"
 #define MAX_CMDLINE_LENGTH 256
 
+// Función para imprimir string escapado para JSON
+static void print_escaped_string(struct seq_file *m, const char *str)
+{
+    int i;
+    if (!str)
+    {
+        seq_printf(m, "N/A");
+        return;
+    }
+
+    for (i = 0; str[i] != '\0'; i++)
+    {
+        switch (str[i])
+        {
+        case '"':
+            seq_printf(m, "\\\"");
+            break;
+        case '\\':
+            seq_printf(m, "\\\\");
+            break;
+        case '\n':
+            seq_printf(m, "\\n");
+            break;
+        case '\r':
+            seq_printf(m, "\\r");
+            break;
+        case '\t':
+            seq_printf(m, "\\t");
+            break;
+        case '\b':
+            seq_printf(m, "\\b");
+            break;
+        case '\f':
+            seq_printf(m, "\\f");
+            break;
+        default:
+            if (str[i] < 32 || str[i] > 126)
+            {
+                // Caracteres no imprimibles
+                seq_printf(m, " ");
+            }
+            else
+            {
+                seq_printf(m, "%c", str[i]);
+            }
+            break;
+        }
+    }
+}
+
 // Función para obtener la línea de comandos de un proceso
 static char *get_process_cmdline(struct task_struct *task)
 {
@@ -187,8 +237,12 @@ static int sysinfo_show(struct seq_file *m, void *v)
         // Imprimir información del proceso
         seq_printf(m, "    {\n");
         seq_printf(m, "      \"PID\": %d,\n", task->pid);
-        seq_printf(m, "      \"Name\": \"%s\",\n", task->comm);
-        seq_printf(m, "      \"Cmdline\": \"%s\",\n", cmdline ? cmdline : "N/A");
+        seq_printf(m, "      \"Name\": \"");
+        print_escaped_string(m, task->comm);
+        seq_printf(m, "\",\n");
+        seq_printf(m, "      \"Cmdline\": \"");
+        print_escaped_string(m, cmdline);
+        seq_printf(m, "\",\n");
         seq_printf(m, "      \"vsz\": %lu,\n", vsz);
         seq_printf(m, "      \"rss\": %lu,\n", rss);
         seq_printf(m, "      \"Memory_Usage\": %lu.%lu,\n", mem_usage / 10, mem_usage % 10);

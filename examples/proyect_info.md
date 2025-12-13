@@ -5,6 +5,7 @@
 - GitLab mcp -
 - RabbitMQ -
 - jupyter/base-notebook -
+  postgres
 
 ** Contedores de bajo consumo **
 

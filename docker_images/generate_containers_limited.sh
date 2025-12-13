@@ -12,9 +12,17 @@
 ###############################################################################
 
 # CONFIGURACIÓN
-MAX_CONTAINERS_TOTAL=15  # Límite máximo de contenedores en el sistema
-CONTAINERS_TO_GENERATE=5  # Cuántos generar por ejecución
-MAX_AGE_MINUTES=30  # Eliminar contenedores más viejos que X minutos
+MIN_CONTAINERS_TOTAL=5   # Mínimo de contenedores (excluyendo Grafana)
+MAX_CONTAINERS_TOTAL=25  # Máximo TOTAL de contenedores en el sistema
+MAX_HIGH_CONSUMPTION=2   # Máximo de contenedores de alto consumo
+MAX_LOW_CONSUMPTION=7    # Máximo de contenedores de bajo consumo
+CONTAINERS_TO_GENERATE=10 # Cuántos generar por ejecución
+CONTINUOUS_MODE=true     # Modo continuo (true/false)
+GENERATION_INTERVAL=60   # Intervalo en segundos entre generaciones (1 minuto)
+
+# Ruta a la base de datos SQLite
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DB_PATH="${SCRIPT_DIR}/../containers.db"
 
 # Colores para output
 RED='\033[0;31m'
@@ -41,6 +49,85 @@ log() {
     echo "[${timestamp}] $1" | tee -a "${LOG_FILE}"
 }
 
+# Función para insertar en la base de datos
+insert_container_to_db() {
+    local container_id=$1
+    local container_name=$2
+    local image_name=$3
+    local status=$4
+    local timestamp=$(date +%s)000  # Convertir a milisegundos
+    
+    if [ -f "${DB_PATH}" ]; then
+        # Verificar permisos de escritura antes de intentar
+        if [ ! -w "${DB_PATH}" ]; then
+            chmod 666 "${DB_PATH}" 2>/dev/null || log "DB WARNING: No se pueden cambiar permisos de ${DB_PATH}"
+        fi
+        
+        sqlite3 "${DB_PATH}" "INSERT OR IGNORE INTO containers (container_id, container_name, image_name, status, created_at) VALUES ('${container_id}', '${container_name}', '${image_name}', '${status}', ${timestamp});" 2>/dev/null
+        if [ $? -eq 0 ]; then
+            log "DB: Contenedor ${container_name} registrado en base de datos"
+        else
+            log "DB ERROR: No se pudo registrar contenedor ${container_name}"
+        fi
+    else
+        log "DB WARNING: Base de datos no encontrada en ${DB_PATH}"
+    fi
+}
+
+# Función para actualizar estado del contenedor en DB
+update_container_status_in_db() {
+    local container_id=$1
+    local status=$2
+    
+    if [ -f "${DB_PATH}" ]; then
+        sqlite3 "${DB_PATH}" "UPDATE containers SET status='${status}' WHERE container_id='${container_id}';" 2>/dev/null
+    fi
+}
+
+# Función para registrar contenedor eliminado en la base de datos
+register_deleted_container() {
+    local container_id=$1
+    local deletion_reason=$2
+    local timestamp=$(date +%s)000
+    
+    if [ -f "${DB_PATH}" ]; then
+        # Obtener información del contenedor antes de eliminarlo
+        local container_info=$(sqlite3 "${DB_PATH}" "SELECT container_name, image_name, ram_usage, cpu_usage, created_at FROM containers WHERE container_id='${container_id}';" 2>/dev/null)
+        
+        if [ -n "${container_info}" ]; then
+            # Separar los valores (formato: name|image|ram|cpu|created)
+            IFS='|' read -r name image ram cpu created <<< "${container_info}"
+            
+            # Insertar en tabla de eliminados
+            sqlite3 "${DB_PATH}" "INSERT INTO deleted_containers (container_id, container_name, image_name, deletion_reason, ram_usage, cpu_usage, created_at, deleted_at) VALUES ('${container_id}', '${name}', '${image}', '${deletion_reason}', ${ram}, ${cpu}, ${created}, ${timestamp});" 2>/dev/null
+            
+            if [ $? -eq 0 ]; then
+                log "DB: Eliminación de contenedor ${name} registrada (razón: ${deletion_reason})"
+            fi
+        fi
+    fi
+}
+
+# Función para limpiar recursos de Docker después de eliminar contenedores
+cleanup_docker_resources() {
+    print_color "${YELLOW}" "🧹 Liberando recursos de Docker..."
+    
+    # Limpiar contenedores detenidos, redes no usadas, imágenes dangling y build cache
+    local prune_output=$(docker system prune -f 2>&1)
+    
+    if [ $? -eq 0 ]; then
+        log "CLEANUP: Docker system prune ejecutado exitosamente"
+        # Extraer espacio liberado si está disponible
+        local space_reclaimed=$(echo "${prune_output}" | grep -i "Total reclaimed space" || echo "Espacio liberado")
+        if [ -n "${space_reclaimed}" ]; then
+            print_color "${GREEN}" "  ✓ ${space_reclaimed}"
+            log "CLEANUP: ${space_reclaimed}"
+        fi
+    else
+        log "WARNING: Error ejecutando docker system prune"
+    fi
+}
+
 # Función para imprimir con color
 print_color() {
     local color=$1
@@ -50,7 +137,8 @@ print_color() {
 
 # Arrays de imágenes disponibles
 HIGH_CONSUMPTION_IMAGES=(
-    "mongo:latest"
+    "memcached:alpine"
+    "rabbitmq:3-management-alpine"
 )
 
 LOW_CONSUMPTION_IMAGES=(
@@ -66,80 +154,58 @@ LOW_DESC="Bajo consumo"
 
 # Función para contar contenedores actuales
 count_containers() {
-    local result=$(docker ps -a 2>/dev/null | grep -E "mongo|nginx|busybox" | wc -l)
+    # ACTUALIZADO: Incluye todas las imágenes posibles
+    local result=$(docker ps -a 2>/dev/null | grep -E "mongo|nginx|busybox|postgres|redis|memcached|rabbitmq|httpd" | grep -v "grafana" | wc -l)
     echo "${result}"
 }
 
-# Función para limpiar contenedores antiguos
-cleanup_old_containers() {
-    local current_count=$(count_containers)
-    
-    if [ ${current_count} -ge ${MAX_CONTAINERS_TOTAL} ]; then
-        print_color "${YELLOW}" "⚠️  Límite alcanzado (${current_count}/${MAX_CONTAINERS_TOTAL})"
-        log "LÍMITE: ${current_count} contenedores, eliminando los más antiguos..."
-        
-        # Obtener los contenedores más antiguos
-        local to_remove=$((current_count - MAX_CONTAINERS_TOTAL + CONTAINERS_TO_GENERATE))
-        
-        print_color "${YELLOW}" "Eliminando ${to_remove} contenedores más antiguos..."
-        
-        docker ps -a --filter "name=mongo\|nginx\|busybox" \
-            --format "{{.ID}} {{.CreatedAt}}" | \
-            sort -k2 | \
-            head -n ${to_remove} | \
-            awk '{print $1}' | \
-            while read container_id; do
-                docker rm -f ${container_id} > /dev/null 2>&1
-                print_color "${MAGENTA}" "  ✓ Contenedor ${container_id} eliminado"
-                log "CLEANUP: Contenedor ${container_id} eliminado"
-            done
-    fi
+# Función para contar contenedores de alto consumo
+count_high_consumption() {
+    # ACTUALIZADO: Agregamos memcached, rabbitmq y httpd al grep
+    local result=$(docker ps -a 2>/dev/null | grep -E "mongo|postgres|redis|memcached|rabbitmq|httpd" | grep -v "grafana" | wc -l)
+    echo "${result}"
 }
 
-# Función para limpiar por edad
-cleanup_by_age() {
-    print_color "${YELLOW}" "Verificando contenedores por edad... y categoria"
-    
-    local now=$(date +%s)
-    local max_age_seconds=$((MAX_AGE_MINUTES * 60))
-    local removed=0
-    
-    docker ps -a --filter "name=mongo\|nginx\|busybox" \
-        --format "{{.ID}} {{.CreatedAt}}" | \
-        while read id created_str; do
-            # Convertir fecha a timestamp
-            local created=$(date -d "$created_str" +%s 2>/dev/null || echo $now)
-            local age=$((now - created))
-            
-            if [ ${age} -gt ${max_age_seconds} ]; then
-                docker rm -f ${id} > /dev/null 2>&1
-                print_color "${MAGENTA}" "  ✓ Contenedor antiguo ${id} eliminado (edad: $((age/60)) min)"
-                log "CLEANUP_AGE: Contenedor ${id} eliminado (${age}s de vida)"
-                removed=$((removed + 1))
-            fi
-        done
-    
-    if [ ${removed} -gt 0 ]; then
-        log "CLEANUP_AGE: ${removed} contenedores eliminados por edad"
-    fi
+# Función para contar contenedores de bajo consumo
+count_low_consumption() {
+    local result=$(docker ps -a 2>/dev/null | grep -E "nginx|busybox" | grep -v "grafana" | wc -l)
+    echo "${result}"
 }
 
-# Función para generar un contenedor aleatorio
+# Función para verificar si una imagen es de alto consumo
+is_high_consumption() {
+    local image=$1
+    for high_img in "${HIGH_CONSUMPTION_IMAGES[@]}"; do
+        if [[ "${image}" == *"${high_img%%:*}"* ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+# Función para generar un contenedor aleatorio SIN verificar límites
 generate_random_container() {
     local index=$1
+    local selected_image=""
+    local description=""
     
-    # Seleccionar imagen aleatoria
+    # Seleccionar imagen aleatoria sin restricciones
     local random_index=$((RANDOM % ${#IMAGES[@]}))
-    local selected_image="${IMAGES[$random_index]}"
+    selected_image="${IMAGES[$random_index]}"
     
-    # Determinar si es de alto o bajo consumo
-    local description="${HIGH_DESC}"
-    for low_img in "${LOW_CONSUMPTION_IMAGES[@]}"; do
-        if [ "${selected_image}" == "${low_img}" ]; then
-            description="${LOW_DESC}"
+    # Determinar descripción
+    local is_high=false
+    for high_img in "${HIGH_CONSUMPTION_IMAGES[@]}"; do
+        if [ "${selected_image}" == "${high_img}" ]; then
+            is_high=true
+            description="${HIGH_DESC}"
             break
         fi
     done
+    
+    if [ "${is_high}" == "false" ]; then
+        description="${LOW_DESC}"
+    fi
     
     # Generar nombre único para el contenedor
     local timestamp=$(date +%Y%m%d_%H%M%S)
@@ -151,7 +217,8 @@ generate_random_container() {
     log "Generando contenedor ${index}: ${container_name} (${description} - ${selected_image})"
     
     # Ejecutar contenedor (configuración especial por imagen)
-    local docker_cmd="docker run -d --name ${container_name}"
+    # --log-opt max-size=1m limita los logs a 1MB para ahorrar espacio
+    local docker_cmd="docker run -d --name ${container_name} --log-opt max-size=1m --log-opt max-file=1"
     
     case "${selected_image}" in
         elasticsearch:*)
@@ -159,6 +226,9 @@ generate_random_container() {
             ;;
         mongo:*)
             docker_cmd="${docker_cmd} -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=password ${selected_image}"
+            ;;
+        postgres:*)
+            docker_cmd="${docker_cmd} -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=password -e POSTGRES_DB=testdb ${selected_image}"
             ;;
         rabbitmq:*)
             docker_cmd="${docker_cmd} -e RABBITMQ_DEFAULT_USER=admin -e RABBITMQ_DEFAULT_PASS=password ${selected_image}"
@@ -176,8 +246,15 @@ generate_random_container() {
     
     # Ejecutar contenedor
     if eval ${docker_cmd} > /dev/null 2>&1; then
-        print_color "${GREEN}" "  ✓ Contenedor creado exitosamente"
+        # Obtener el ID del contenedor creado
+        local created_container_id=$(docker ps -a --filter "name=${container_name}" --format "{{.ID}}" | head -n 1)
+        
+        print_color "${GREEN}" "  ✓ Contenedor creado exitosamente (ID: ${created_container_id})"
         log "SUCCESS: Contenedor ${container_name} creado (${selected_image})"
+        
+        # Registrar en la base de datos
+        insert_container_to_db "${created_container_id}" "${container_name}" "${selected_image}" "running"
+        
         return 0
     else
         print_color "${RED}" "  ✗ Error al crear contenedor"
@@ -189,7 +266,10 @@ generate_random_container() {
 # Función principal
 main() {
     print_color "${GREEN}" "=========================================="
-    print_color "${GREEN}" "  Generador LIMITADO de Contenedores"
+    print_color "${GREEN}" "  Generador con Límites por Categoría"
+    if [ "${CONTINUOUS_MODE}" == "true" ]; then
+        print_color "${GREEN}" "  MODO CONTINUO ACTIVADO"
+    fi
     print_color "${GREEN}" "=========================================="
     echo
     
@@ -202,71 +282,258 @@ main() {
         exit 1
     fi
     
-    # Contar contenedores actuales
-    local current_count=$(count_containers)
-    print_color "${YELLOW}" "Contenedores actuales: ${current_count}/${MAX_CONTAINERS_TOTAL}"
-    log "Contenedores actuales: ${current_count}"
-    
-    # Limpiar por edad primero
-    cleanup_by_age
-    
-    # Limpiar si se alcanzó el límite
-    cleanup_old_containers
-    
-    # Actualizar conteo después de limpieza
-    current_count=$(count_containers)
-    
-    # Verificar si podemos generar más
-    local available_space=$((MAX_CONTAINERS_TOTAL - current_count))
-    
-    if [ ${available_space} -le 0 ]; then
-        print_color "${RED}" "⚠️  No se pueden generar más contenedores (límite alcanzado)"
-        log "LÍMITE: No se pueden generar más contenedores"
-        exit 0
-    fi
-    
-    # Ajustar cantidad a generar si es necesario
-    local to_generate=${CONTAINERS_TO_GENERATE}
-    if [ ${to_generate} -gt ${available_space} ]; then
-        to_generate=${available_space}
-        print_color "${YELLOW}" "Ajustando a ${to_generate} contenedores (espacio disponible)"
-    fi
-    
-    echo
-    print_color "${YELLOW}" "Generando ${to_generate} contenedores nuevos..."
-    echo
-    
-    # Generar contenedores
-    local success_count=0
-    local fail_count=0
-    
-    for i in $(seq 1 ${to_generate}); do
-        if generate_random_container "${i}"; then
-            success_count=$((success_count + 1))
-        else
-            fail_count=$((fail_count + 1))
+    # Función para un ciclo de generación
+    run_generation_cycle() {
+        local cycle_number=$1
+        
+        if [ "${CONTINUOUS_MODE}" == "true" ]; then
+            print_color "${MAGENTA}" "\n╔══════════════════════════════════════════╗"
+            print_color "${MAGENTA}" "║  Ciclo #${cycle_number} - $(date '+%H:%M:%S')"
+            print_color "${MAGENTA}" "╚══════════════════════════════════════════╝"
         fi
-        sleep 0.3
-    done
+        
+        # Contar contenedores actuales
+        local current_count=$(count_containers)
+        local high_count=$(count_high_consumption)
+        local low_count=$(count_low_consumption)
+        
+        print_color "${YELLOW}" "Estado actual:"
+        print_color "${BLUE}" "  Total: ${current_count} (mínimo: ${MIN_CONTAINERS_TOTAL}, máximo: ${MAX_CONTAINERS_TOTAL})"
+        print_color "${BLUE}" "  Alto consumo: ${high_count}/${MAX_HIGH_CONSUMPTION}"
+        print_color "${BLUE}" "  Bajo consumo: ${low_count}/${MAX_LOW_CONSUMPTION}"
+        
+        log "Contenedores: Total=${current_count}, Alto=${high_count}, Bajo=${low_count}"
+        
+        # VERIFICAR LÍMITE MÁXIMO TOTAL ANTES DE GENERAR
+        if [ ${current_count} -ge ${MAX_CONTAINERS_TOTAL} ]; then
+            print_color "${RED}" "⚠️  LÍMITE MÁXIMO ALCANZADO (${current_count}/${MAX_CONTAINERS_TOTAL})"
+            print_color "${YELLOW}" "No se generarán más contenedores para evitar sobrecarga del sistema"
+            log "WARNING: Límite máximo de ${MAX_CONTAINERS_TOTAL} contenedores alcanzado, no se generan nuevos"
+            
+            # Aplicar limpieza por límites de categoría si es necesario
+            local deleted_count=0
+            
+            # Verificar y limpiar alto consumo
+            if [ ${high_count} -gt ${MAX_HIGH_CONSUMPTION} ]; then
+                local to_remove=$((high_count - MAX_HIGH_CONSUMPTION))
+                print_color "${YELLOW}" "Limpiando ${to_remove} contenedores de alto consumo..."
+                
+                local containers_to_delete=$(docker ps -a --format "{{.ID}} {{.CreatedAt}} {{.Names}}" 2>/dev/null | \
+                    grep -E "mongo|postgres|redis" | \
+                    grep -v "grafana" | \
+                    sort -k2 | \
+                    head -n ${to_remove} | \
+                    awk '{print $1}')
+                
+                for container_id in ${containers_to_delete}; do
+                    if [ -n "${container_id}" ]; then
+                        register_deleted_container "${container_id}" "limite_maximo_sistema"
+                        update_container_status_in_db "${container_id}" "removed"
+                        docker rm -f ${container_id} > /dev/null 2>&1
+                        print_color "${MAGENTA}" "  ✓ Contenedor ${container_id} eliminado"
+                        deleted_count=$((deleted_count + 1))
+                    fi
+                done
+            fi
+            
+            # Verificar y limpiar bajo consumo
+            if [ ${low_count} -gt ${MAX_LOW_CONSUMPTION} ]; then
+                local to_remove=$((low_count - MAX_LOW_CONSUMPTION))
+                print_color "${YELLOW}" "Limpiando ${to_remove} contenedores de bajo consumo..."
+                
+                local containers_to_delete=$(docker ps -a --format "{{.ID}} {{.CreatedAt}} {{.Names}}" 2>/dev/null | \
+                    grep -E "nginx|busybox" | \
+                    grep -v "grafana" | \
+                    sort -k2 | \
+                    head -n ${to_remove} | \
+                    awk '{print $1}')
+                
+                for container_id in ${containers_to_delete}; do
+                    if [ -n "${container_id}" ]; then
+                        register_deleted_container "${container_id}" "limite_maximo_sistema"
+                        update_container_status_in_db "${container_id}" "removed"
+                        docker rm -f ${container_id} > /dev/null 2>&1
+                        print_color "${MAGENTA}" "  ✓ Contenedor ${container_id} eliminado"
+                        deleted_count=$((deleted_count + 1))
+                    fi
+                done
+            fi
+            
+            if [ ${deleted_count} -gt 0 ]; then
+                log "CLEANUP: ${deleted_count} contenedores eliminados por límite máximo"
+                cleanup_docker_resources
+            fi
+            
+            return
+        fi
+        
+        # SIEMPRE generar la cantidad configurada
+        local to_generate=${CONTAINERS_TO_GENERATE}
+        
+        echo
+        print_color "${YELLOW}" "Generando ${to_generate} contenedores nuevos aleatoriamente..."
+        echo
+        
+        # Generar contenedores
+        local success_count=0
+        local fail_count=0
+        
+        for i in $(seq 1 ${to_generate}); do
+            if generate_random_container "${i}"; then
+                success_count=$((success_count + 1))
+            else
+                fail_count=$((fail_count + 1))
+            fi
+            sleep 0.3
+        done
+        
+        # Conteo después de generar
+        local after_gen_count=$(count_containers)
+        local after_gen_high=$(count_high_consumption)
+        local after_gen_low=$(count_low_consumption)
+        
+        echo
+        print_color "${GREEN}" "=========================================="
+        print_color "${GREEN}" "  Resumen de Generación"
+        print_color "${GREEN}" "=========================================="
+        print_color "${GREEN}" "Contenedores creados: ${success_count}/${to_generate}"
+        if [ ${fail_count} -gt 0 ]; then
+            print_color "${RED}" "Contenedores fallidos: ${fail_count}"
+        fi
+        print_color "${BLUE}" "Total después de generar: ${after_gen_count}"
+        print_color "${BLUE}" "Alto consumo: ${after_gen_high}/${MAX_HIGH_CONSUMPTION}"
+        print_color "${BLUE}" "Bajo consumo: ${after_gen_low}/${MAX_LOW_CONSUMPTION}"
+        
+        # AHORA verificar y limpiar si se sobrepasaron los límites
+        echo
+        print_color "${YELLOW}" "Verificando límites después de generar..."
+        
+        local deleted_count=0
+        
+        # Verificar límite de alto consumo
+        if [ ${after_gen_high} -gt ${MAX_HIGH_CONSUMPTION} ]; then
+            local to_remove=$((after_gen_high - MAX_HIGH_CONSUMPTION))
+            print_color "${YELLOW}" "⚠️  Exceso de alto consumo: ${to_remove} contenedores a eliminar"
+            
+            # Obtener los IDs de contenedores más antiguos
+            local containers_to_delete=$(docker ps -a --filter "name=mongo" --format "{{.ID}} {{.CreatedAt}}" 2>/dev/null | \
+                grep -v "grafana" | \
+                sort -k2 | \
+                head -n ${to_remove} | \
+                awk '{print $1}')
+            
+            containers_to_delete+=" "$(docker ps -a --filter "name=postgres" --format "{{.ID}} {{.CreatedAt}}" 2>/dev/null | \
+                grep -v "grafana" | \
+                sort -k2 | \
+                head -n ${to_remove} | \
+                awk '{print $1}')
+            
+            containers_to_delete+=" "$(docker ps -a --filter "name=redis" --format "{{.ID}} {{.CreatedAt}}" 2>/dev/null | \
+                grep -v "grafana" | \
+                sort -k2 | \
+                head -n ${to_remove} | \
+                awk '{print $1}')
+            
+            # Obtener todos juntos y ordenar por fecha
+         local containers_to_delete=$(docker ps -a --format "{{.ID}} {{.CreatedAt}} {{.Names}}" 2>/dev/null | \
+                grep -E "mongo|postgres|redis|memcached|rabbitmq|httpd" | \
+                grep -v "grafana" | \
+                sort -k2 | \
+                head -n ${to_remove} | \
+                awk '{print $1}')
+            
+            # Eliminar contenedores
+            for container_id in ${containers_to_delete}; do
+                if [ -n "${container_id}" ]; then
+                    register_deleted_container "${container_id}" "exceso_limite_alto_consumo"
+                    update_container_status_in_db "${container_id}" "removed"
+                    docker rm -f ${container_id} > /dev/null 2>&1
+                    print_color "${MAGENTA}" "  ✓ Contenedor alto consumo ${container_id} eliminado"
+                    log "CLEANUP: Contenedor alto consumo ${container_id} eliminado por exceso"
+                    deleted_count=$((deleted_count + 1))
+                fi
+            done
+        fi
+        
+        # Verificar límite de bajo consumo
+        after_gen_low=$(count_low_consumption)
+        if [ ${after_gen_low} -gt ${MAX_LOW_CONSUMPTION} ]; then
+            local to_remove=$((after_gen_low - MAX_LOW_CONSUMPTION))
+            print_color "${YELLOW}" "⚠️  Exceso de bajo consumo: ${to_remove} contenedores a eliminar"
+            
+            # Obtener todos los contenedores de bajo consumo y ordenar por fecha
+            local containers_to_delete=$(docker ps -a --format "{{.ID}} {{.CreatedAt}} {{.Names}}" 2>/dev/null | \
+                grep -E "nginx|busybox" | \
+                grep -v "grafana" | \
+                sort -k2 | \
+                head -n ${to_remove} | \
+                awk '{print $1}')
+            
+            # Eliminar contenedores
+            for container_id in ${containers_to_delete}; do
+                if [ -n "${container_id}" ]; then
+                    register_deleted_container "${container_id}" "exceso_limite_bajo_consumo"
+                    update_container_status_in_db "${container_id}" "removed"
+                    docker rm -f ${container_id} > /dev/null 2>&1
+                    print_color "${MAGENTA}" "  ✓ Contenedor bajo consumo ${container_id} eliminado"
+                    log "CLEANUP: Contenedor bajo consumo ${container_id} eliminado por exceso"
+                    deleted_count=$((deleted_count + 1))
+                fi
+            done
+        fi
+        
+        # Conteo final después de limpieza
+        local final_count=$(count_containers)
+        local final_high=$(count_high_consumption)
+        local final_low=$(count_low_consumption)
+        
+        echo
+        print_color "${GREEN}" "=========================================="
+        print_color "${GREEN}" "  Estado Final"
+        print_color "${GREEN}" "=========================================="
+        if [ ${deleted_count} -gt 0 ]; then
+            print_color "${MAGENTA}" "Contenedores eliminados: ${deleted_count}"
+            # Limpiar recursos de Docker después de eliminar contenedores
+            cleanup_docker_resources
+        fi
+        print_color "${BLUE}" "Total final: ${final_count}"
+        print_color "${BLUE}" "Alto consumo: ${final_high}/${MAX_HIGH_CONSUMPTION}"
+        print_color "${BLUE}" "Bajo consumo: ${final_low}/${MAX_LOW_CONSUMPTION}"
+        
+        log "=== Fin ciclo ${cycle_number}: ${success_count} creados, ${deleted_count} eliminados ==="
+        log "=== Estado final: Total=${final_count}, Alto=${final_high}, Bajo=${final_low} ==="
+    }
     
-    # Conteo final
-    local final_count=$(count_containers)
-    
-    echo
-    print_color "${GREEN}" "=========================================="
-    print_color "${GREEN}" "  Resumen de Generación"
-    print_color "${GREEN}" "=========================================="
-    print_color "${GREEN}" "Contenedores creados: ${success_count}/${to_generate}"
-    if [ ${fail_count} -gt 0 ]; then
-        print_color "${RED}" "Contenedores fallidos: ${fail_count}"
+    # Modo continuo o una sola ejecución
+    if [ "${CONTINUOUS_MODE}" == "true" ]; then
+        print_color "${GREEN}" "Iniciando generación continua (Ctrl+C para detener)..."
+        print_color "${BLUE}" "Intervalo: ${GENERATION_INTERVAL} segundos"
+        echo
+        
+        local cycle=1
+        while true; do
+            run_generation_cycle ${cycle}
+            
+            if [ ${cycle} -eq 1 ]; then
+                echo
+                print_color "${BLUE}" "Para ver los contenedores: docker ps"
+                print_color "${BLUE}" "Para ver estadísticas: docker stats"
+                print_color "${BLUE}" "Para detener: Ctrl+C"
+            fi
+            
+            echo
+            print_color "${YELLOW}" "⏳ Esperando ${GENERATION_INTERVAL} segundos hasta el próximo ciclo..."
+            sleep ${GENERATION_INTERVAL}
+            
+            cycle=$((cycle + 1))
+        done
+    else
+        run_generation_cycle 1
+        
+        echo
+        print_color "${BLUE}" "Para ver los contenedores: docker ps"
+        print_color "${BLUE}" "Para ver estadísticas: docker stats"
     fi
-    print_color "${BLUE}" "Total en sistema: ${final_count}/${MAX_CONTAINERS_TOTAL}"
-    
-    log "=== Fin: ${success_count} exitosos, ${fail_count} fallidos, Total: ${final_count} ==="
-    
-    echo
-    print_color "${BLUE}" "Para ver los contenedores: docker ps"
-    print_color "${BLUE}" "Para ver estadísticas: docker stats"
 }
 
 # Ejecutar función principal

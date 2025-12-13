@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"main/connexionDB"
+	"main/cronjob"
 	kernelmodules "main/kernel_modules"
 	"main/utils"
 )
@@ -35,7 +36,14 @@ func main() {
 	if err != nil {
 		log.Fatal("Error iniciando docker compose:", err)
 	}
-
+	/*
+		//! Configurar cronjob para generación de contenedores
+		err = cronjob.SetupDockerCronjob(exePath)
+		if err != nil {
+			log.Printf("Advertencia: No se pudo configurar cronjob: %v", err)
+			// No es fatal, el programa puede continuar sin el cronjob
+		}
+	*/
 	//! Cargar módulos del kernel
 	kernelmodules.LoadModules()
 
@@ -45,7 +53,7 @@ func main() {
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
-	// Se define el ticker de 20 segundos
+	// Se define el ticker de 20 segundos para recolección de datos
 	ticker := time.NewTicker(20 * time.Second)
 	// 'defer ticker.Stop()' asegura que el temporizador se detenga correctamente cuando el programa termine.
 	defer ticker.Stop()
@@ -72,6 +80,7 @@ loop:
 			// Extraer los valores directamente del map de sysinfo (memoria y CPU)
 			totalram := int64(lectura_sysinfo["Totalram"].(float64))
 			freeram := int64(lectura_sysinfo["Freeram"].(float64))
+			usedram := int64(lectura_sysinfo["Usedram"].(float64))
 			procs := int(lectura_sysinfo["Procs"].(float64))
 
 			// Extraer valores de CPU del mismo módulo sysinfo
@@ -80,8 +89,8 @@ loop:
 			cpuIdle := int64(lectura_sysinfo["cpu_idle"].(float64))
 
 			// Insertar una sola fila con los valores del sistema
-			_, err = db.Exec("INSERT INTO registros (total_ram, ram_libre, total_procesos, created_at) VALUES (?, ?, ?, ?)",
-				totalram, freeram, procs, time.Now().UnixMilli())
+			_, err = db.Exec("INSERT INTO registros (total_ram, ram_libre, ram_usada, total_procesos, created_at) VALUES (?, ?, ?, ?, ?)",
+				totalram, freeram, usedram, procs, time.Now().UnixMilli())
 			if err != nil {
 				// Si ocurre un error al insertar, se registra en los logs.
 				log.Println("Error insertando:", err)
@@ -119,10 +128,29 @@ loop:
 				log.Printf("Insertados %d procesos en la base de datos\n", len(processes))
 			}
 
+			// Sincronizar contenedores de Docker con la base de datos
+			err = utils.SyncDockerContainers(db)
+			if err != nil {
+				log.Printf("Error sincronizando contenedores: %v", err)
+			}
+
+			// Actualizar métricas de contenedores Docker
+			err = utils.UpdateAllContainerMetrics(db, lectura_continfo)
+			if err != nil {
+				log.Printf("Error actualizando métricas de contenedores: %v", err)
+			}
+
 		case <-sigs:
 			// Este caso se ejecuta cuando se recibe una señal de interrupción o terminación.
 			// Detiene el daemon y sale del bucle.
 			log.Println("Daemon detenido.")
+
+			// Limpiar cronjob antes de salir
+			log.Println("Removiendo cronjob...")
+			if err := cronjob.RemoveCronjob(exePath); err != nil {
+				log.Printf("Advertencia al remover cronjob: %v", err)
+			}
+
 			break loop
 		}
 	}
