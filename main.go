@@ -36,14 +36,14 @@ func main() {
 	if err != nil {
 		log.Fatal("Error iniciando docker compose:", err)
 	}
-	/*
-		//! Configurar cronjob para generación de contenedores
-		err = cronjob.SetupDockerCronjob(exePath)
-		if err != nil {
-			log.Printf("Advertencia: No se pudo configurar cronjob: %v", err)
-			// No es fatal, el programa puede continuar sin el cronjob
-		}
-	*/
+
+	//! Configurar cronjob para generación de contenedores
+	err = cronjob.SetupDockerCronjob(exePath)
+	if err != nil {
+		log.Printf("Advertencia: No se pudo configurar cronjob: %v", err)
+		// No es fatal, el programa puede continuar sin el cronjob
+	}
+
 	//! Cargar módulos del kernel
 	kernelmodules.LoadModules()
 

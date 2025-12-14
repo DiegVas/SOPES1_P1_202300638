@@ -12,10 +12,11 @@
 ###############################################################################
 
 # CONFIGURACIÓN
-MIN_CONTAINERS_TOTAL=5   # Mínimo de contenedores (excluyendo Grafana)
-MAX_CONTAINERS_TOTAL=25  # Máximo TOTAL de contenedores en el sistema
-MAX_HIGH_CONSUMPTION=2   # Máximo de contenedores de alto consumo
-MAX_LOW_CONSUMPTION=7    # Máximo de contenedores de bajo consumo
+MIN_HIGH_CONSUMPTION=2   # MÍNIMO OBLIGATORIO de contenedores de alto consumo
+MIN_LOW_CONSUMPTION=3    # MÍNIMO OBLIGATORIO de contenedores de bajo consumo
+MAX_CONTAINERS_TOTAL=15  # Máximo TOTAL de contenedores en el sistema
+MAX_HIGH_CONSUMPTION=10  # Máximo de contenedores de alto consumo
+MAX_LOW_CONSUMPTION=13   # Máximo de contenedores de bajo consumo
 CONTAINERS_TO_GENERATE=10 # Cuántos generar por ejecución
 CONTINUOUS_MODE=true     # Modo continuo (true/false)
 GENERATION_INTERVAL=60   # Intervalo en segundos entre generaciones (1 minuto)
@@ -298,9 +299,9 @@ main() {
         local low_count=$(count_low_consumption)
         
         print_color "${YELLOW}" "Estado actual:"
-        print_color "${BLUE}" "  Total: ${current_count} (mínimo: ${MIN_CONTAINERS_TOTAL}, máximo: ${MAX_CONTAINERS_TOTAL})"
-        print_color "${BLUE}" "  Alto consumo: ${high_count}/${MAX_HIGH_CONSUMPTION}"
-        print_color "${BLUE}" "  Bajo consumo: ${low_count}/${MAX_LOW_CONSUMPTION}"
+        print_color "${BLUE}" "  Total: ${current_count} (máximo: ${MAX_CONTAINERS_TOTAL})"
+        print_color "${BLUE}" "  Alto consumo: ${high_count} (mínimo: ${MIN_HIGH_CONSUMPTION}, máximo: ${MAX_HIGH_CONSUMPTION})"
+        print_color "${BLUE}" "  Bajo consumo: ${low_count} (mínimo: ${MIN_LOW_CONSUMPTION}, máximo: ${MAX_LOW_CONSUMPTION})"
         
         log "Contenedores: Total=${current_count}, Alto=${high_count}, Bajo=${low_count}"
         
@@ -313,13 +314,13 @@ main() {
             # Aplicar limpieza por límites de categoría si es necesario
             local deleted_count=0
             
-            # Verificar y limpiar alto consumo
+            # Verificar y limpiar alto consumo (respetando mínimo)
             if [ ${high_count} -gt ${MAX_HIGH_CONSUMPTION} ]; then
                 local to_remove=$((high_count - MAX_HIGH_CONSUMPTION))
                 print_color "${YELLOW}" "Limpiando ${to_remove} contenedores de alto consumo..."
                 
                 local containers_to_delete=$(docker ps -a --format "{{.ID}} {{.CreatedAt}} {{.Names}}" 2>/dev/null | \
-                    grep -E "mongo|postgres|redis" | \
+                    grep -E "mongo|postgres|redis|memcached|rabbitmq|httpd" | \
                     grep -v "grafana" | \
                     sort -k2 | \
                     head -n ${to_remove} | \
@@ -327,6 +328,12 @@ main() {
                 
                 for container_id in ${containers_to_delete}; do
                     if [ -n "${container_id}" ]; then
+                        # Verificar que no bajemos del mínimo
+                        local current_high=$(count_high_consumption)
+                        if [ ${current_high} -le ${MIN_HIGH_CONSUMPTION} ]; then
+                            print_color "${RED}" "  ⚠️  No se puede eliminar: mínimo de ${MIN_HIGH_CONSUMPTION} contenedores de alto consumo alcanzado"
+                            break
+                        fi
                         register_deleted_container "${container_id}" "limite_maximo_sistema"
                         update_container_status_in_db "${container_id}" "removed"
                         docker rm -f ${container_id} > /dev/null 2>&1
@@ -336,7 +343,7 @@ main() {
                 done
             fi
             
-            # Verificar y limpiar bajo consumo
+            # Verificar y limpiar bajo consumo (respetando mínimo)
             if [ ${low_count} -gt ${MAX_LOW_CONSUMPTION} ]; then
                 local to_remove=$((low_count - MAX_LOW_CONSUMPTION))
                 print_color "${YELLOW}" "Limpiando ${to_remove} contenedores de bajo consumo..."
@@ -350,6 +357,12 @@ main() {
                 
                 for container_id in ${containers_to_delete}; do
                     if [ -n "${container_id}" ]; then
+                        # Verificar que no bajemos del mínimo
+                        local current_low=$(count_low_consumption)
+                        if [ ${current_low} -le ${MIN_LOW_CONSUMPTION} ]; then
+                            print_color "${RED}" "  ⚠️  No se puede eliminar: mínimo de ${MIN_LOW_CONSUMPTION} contenedores de bajo consumo alcanzado"
+                            break
+                        fi
                         register_deleted_container "${container_id}" "limite_maximo_sistema"
                         update_container_status_in_db "${container_id}" "removed"
                         docker rm -f ${container_id} > /dev/null 2>&1
@@ -410,32 +423,13 @@ main() {
         
         local deleted_count=0
         
-        # Verificar límite de alto consumo
+        # Verificar límite de alto consumo (respetando mínimo)
         if [ ${after_gen_high} -gt ${MAX_HIGH_CONSUMPTION} ]; then
             local to_remove=$((after_gen_high - MAX_HIGH_CONSUMPTION))
             print_color "${YELLOW}" "⚠️  Exceso de alto consumo: ${to_remove} contenedores a eliminar"
             
-            # Obtener los IDs de contenedores más antiguos
-            local containers_to_delete=$(docker ps -a --filter "name=mongo" --format "{{.ID}} {{.CreatedAt}}" 2>/dev/null | \
-                grep -v "grafana" | \
-                sort -k2 | \
-                head -n ${to_remove} | \
-                awk '{print $1}')
-            
-            containers_to_delete+=" "$(docker ps -a --filter "name=postgres" --format "{{.ID}} {{.CreatedAt}}" 2>/dev/null | \
-                grep -v "grafana" | \
-                sort -k2 | \
-                head -n ${to_remove} | \
-                awk '{print $1}')
-            
-            containers_to_delete+=" "$(docker ps -a --filter "name=redis" --format "{{.ID}} {{.CreatedAt}}" 2>/dev/null | \
-                grep -v "grafana" | \
-                sort -k2 | \
-                head -n ${to_remove} | \
-                awk '{print $1}')
-            
             # Obtener todos juntos y ordenar por fecha
-         local containers_to_delete=$(docker ps -a --format "{{.ID}} {{.CreatedAt}} {{.Names}}" 2>/dev/null | \
+            local containers_to_delete=$(docker ps -a --format "{{.ID}} {{.CreatedAt}} {{.Names}}" 2>/dev/null | \
                 grep -E "mongo|postgres|redis|memcached|rabbitmq|httpd" | \
                 grep -v "grafana" | \
                 sort -k2 | \
@@ -445,6 +439,12 @@ main() {
             # Eliminar contenedores
             for container_id in ${containers_to_delete}; do
                 if [ -n "${container_id}" ]; then
+                    # Verificar que no bajemos del mínimo
+                    local current_high=$(count_high_consumption)
+                    if [ ${current_high} -le ${MIN_HIGH_CONSUMPTION} ]; then
+                        print_color "${RED}" "  ⚠️  No se puede eliminar más: mínimo de ${MIN_HIGH_CONSUMPTION} contenedores de alto consumo alcanzado"
+                        break
+                    fi
                     register_deleted_container "${container_id}" "exceso_limite_alto_consumo"
                     update_container_status_in_db "${container_id}" "removed"
                     docker rm -f ${container_id} > /dev/null 2>&1
@@ -455,7 +455,7 @@ main() {
             done
         fi
         
-        # Verificar límite de bajo consumo
+        # Verificar límite de bajo consumo (respetando mínimo)
         after_gen_low=$(count_low_consumption)
         if [ ${after_gen_low} -gt ${MAX_LOW_CONSUMPTION} ]; then
             local to_remove=$((after_gen_low - MAX_LOW_CONSUMPTION))
@@ -472,6 +472,12 @@ main() {
             # Eliminar contenedores
             for container_id in ${containers_to_delete}; do
                 if [ -n "${container_id}" ]; then
+                    # Verificar que no bajemos del mínimo
+                    local current_low=$(count_low_consumption)
+                    if [ ${current_low} -le ${MIN_LOW_CONSUMPTION} ]; then
+                        print_color "${RED}" "  ⚠️  No se puede eliminar más: mínimo de ${MIN_LOW_CONSUMPTION} contenedores de bajo consumo alcanzado"
+                        break
+                    fi
                     register_deleted_container "${container_id}" "exceso_limite_bajo_consumo"
                     update_container_status_in_db "${container_id}" "removed"
                     docker rm -f ${container_id} > /dev/null 2>&1

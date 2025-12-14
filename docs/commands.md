@@ -105,3 +105,15 @@ sudo docker compose down
 
 - Link de grafana
   http://localhost:3000/
+
+# Leer información del sistema
+
+cat /proc/sysinfo_so1_202300638
+
+# Leer información de procesos
+
+cat /proc/continfo_so1_202300638
+
+# Seguir logs en tiempo real
+
+tail -f docker_images/cronjob_docker.log
