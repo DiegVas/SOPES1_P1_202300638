@@ -112225,3 +112225,170 @@ error during connect: Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.52/containers/js
 [2025-12-13 23:08:56] === Estado final: Total=0, Alto=0, Bajo=0 ===
 
 [1;33m⏳ Esperando 60 segundos hasta el próximo ciclo...[0m
+[0;32m==========================================[0m
+[0;32m  Generador con Límites por Categoría[0m
+[0;32m  MODO CONTINUO ACTIVADO[0m
+[0;32m==========================================[0m
+
+[2025-12-15 00:21:01] === Inicio de generación de contenedores ===
+[0;32mIniciando generación continua (Ctrl+C para detener)...[0m
+[0;34mIntervalo: 60 segundos[0m
+
+[0;35m
+╔══════════════════════════════════════════╗[0m
+[0;35m║  Ciclo #1 - 00:21:01[0m
+[0;35m╚══════════════════════════════════════════╝[0m
+[1;33mEstado actual:[0m
+[0;34m  Total: 0 (máximo: 15)[0m
+[0;34m  Alto consumo: 0 (mínimo: 2, máximo: 10)[0m
+[0;34m  Bajo consumo: 0 (mínimo: 3, máximo: 13)[0m
+[2025-12-15 00:21:02] Contenedores: Total=0, Alto=0, Bajo=0
+
+[1;33mGenerando 10 contenedores nuevos aleatoriamente...[0m
+
+[0;34m[1/10] Generando: memcached_alpine_20251215_002102_9529[0m
+[2025-12-15 00:21:02] Generando contenedor 1: memcached_alpine_20251215_002102_9529 (Alto consumo - memcached:alpine)
+[0;32m  ✓ Contenedor creado exitosamente (ID: 6324d03fb6e1)[0m
+[2025-12-15 00:21:07] SUCCESS: Contenedor memcached_alpine_20251215_002102_9529 creado (memcached:alpine)
+[2025-12-15 00:21:07] DB ERROR: No se pudo registrar contenedor memcached_alpine_20251215_002102_9529
+[0;34m[2/10] Generando: nginx_trixie-perl_20251215_002108_7627[0m
+[2025-12-15 00:21:08] Generando contenedor 2: nginx_trixie-perl_20251215_002108_7627 (Bajo consumo - nginx:trixie-perl)
+[0;32m  ✓ Contenedor creado exitosamente (ID: 4362b7e414d4)[0m
+[2025-12-15 00:21:31] SUCCESS: Contenedor nginx_trixie-perl_20251215_002108_7627 creado (nginx:trixie-perl)
+[2025-12-15 00:21:31] DB ERROR: No se pudo registrar contenedor nginx_trixie-perl_20251215_002108_7627
+[0;34m[3/10] Generando: nginx_trixie-perl_20251215_002132_3104[0m
+[2025-12-15 00:21:32] Generando contenedor 3: nginx_trixie-perl_20251215_002132_3104 (Bajo consumo - nginx:trixie-perl)
+[0;32m  ✓ Contenedor creado exitosamente (ID: ceada6f8603c)[0m
+[2025-12-15 00:21:33] SUCCESS: Contenedor nginx_trixie-perl_20251215_002132_3104 creado (nginx:trixie-perl)
+[2025-12-15 00:21:33] DB ERROR: No se pudo registrar contenedor nginx_trixie-perl_20251215_002132_3104
+[0;34m[4/10] Generando: memcached_alpine_20251215_002133_9377[0m
+[2025-12-15 00:21:33] Generando contenedor 4: memcached_alpine_20251215_002133_9377 (Alto consumo - memcached:alpine)
+[0;32m  ✓ Contenedor creado exitosamente (ID: b9d490505f39)[0m
+[2025-12-15 00:21:34] SUCCESS: Contenedor memcached_alpine_20251215_002133_9377 creado (memcached:alpine)
+[2025-12-15 00:21:34] DB ERROR: No se pudo registrar contenedor memcached_alpine_20251215_002133_9377
+[0;34m[5/10] Generando: nginx_trixie-perl_20251215_002135_4965[0m
+[2025-12-15 00:21:35] Generando contenedor 5: nginx_trixie-perl_20251215_002135_4965 (Bajo consumo - nginx:trixie-perl)
+[0;32m  ✓ Contenedor creado exitosamente (ID: 423e051ae8e9)[0m
+[2025-12-15 00:21:36] SUCCESS: Contenedor nginx_trixie-perl_20251215_002135_4965 creado (nginx:trixie-perl)
+[2025-12-15 00:21:36] DB ERROR: No se pudo registrar contenedor nginx_trixie-perl_20251215_002135_4965
+[0;34m[6/10] Generando: memcached_alpine_20251215_002136_2369[0m
+[2025-12-15 00:21:36] Generando contenedor 6: memcached_alpine_20251215_002136_2369 (Alto consumo - memcached:alpine)
+[0;32m  ✓ Contenedor creado exitosamente (ID: 602b69d50783)[0m
+[2025-12-15 00:21:37] SUCCESS: Contenedor memcached_alpine_20251215_002136_2369 creado (memcached:alpine)
+[2025-12-15 00:21:37] DB ERROR: No se pudo registrar contenedor memcached_alpine_20251215_002136_2369
+[0;34m[7/10] Generando: rabbitmq_3-management-alpine_20251215_002137_2398[0m
+[2025-12-15 00:21:37] Generando contenedor 7: rabbitmq_3-management-alpine_20251215_002137_2398 (Alto consumo - rabbitmq:3-management-alpine)
+[0;32m==========================================[0m
+[0;32m  Generador con Límites por Categoría[0m
+[0;32m  MODO CONTINUO ACTIVADO[0m
+[0;32m==========================================[0m
+
+[2025-12-15 00:22:02] === Inicio de generación de contenedores ===
+[0;32mIniciando generación continua (Ctrl+C para detener)...[0m
+[0;34mIntervalo: 60 segundos[0m
+
+[0;35m
+╔══════════════════════════════════════════╗[0m
+[0;35m║  Ciclo #1 - 00:22:02[0m
+[0;35m╚══════════════════════════════════════════╝[0m
+[1;33mEstado actual:[0m
+[0;34m  Total: 7 (máximo: 15)[0m
+[0;34m  Alto consumo: 3 (mínimo: 2, máximo: 10)[0m
+[0;34m  Bajo consumo: 4 (mínimo: 3, máximo: 13)[0m
+[2025-12-15 00:22:03] Contenedores: Total=7, Alto=3, Bajo=4
+
+[1;33mGenerando 10 contenedores nuevos aleatoriamente...[0m
+
+[0;34m[1/10] Generando: busybox_unstable-uclibc_20251215_002203_6880[0m
+[2025-12-15 00:22:03] Generando contenedor 1: busybox_unstable-uclibc_20251215_002203_6880 (Bajo consumo - busybox:unstable-uclibc)
+[0;32m  ✓ Contenedor creado exitosamente (ID: af1bbf7bbc0b)[0m
+[2025-12-15 00:22:11] SUCCESS: Contenedor busybox_unstable-uclibc_20251215_002203_6880 creado (busybox:unstable-uclibc)
+[2025-12-15 00:22:11] DB ERROR: No se pudo registrar contenedor busybox_unstable-uclibc_20251215_002203_6880
+[0;34m[2/10] Generando: rabbitmq_3-management-alpine_20251215_002211_1493[0m
+[2025-12-15 00:22:11] Generando contenedor 2: rabbitmq_3-management-alpine_20251215_002211_1493 (Alto consumo - rabbitmq:3-management-alpine)
+[0;32m  ✓ Contenedor creado exitosamente (ID: df183cf1d75b)[0m
+[2025-12-15 00:22:18] SUCCESS: Contenedor rabbitmq_3-management-alpine_20251215_002137_2398 creado (rabbitmq:3-management-alpine)
+[2025-12-15 00:22:18] DB ERROR: No se pudo registrar contenedor rabbitmq_3-management-alpine_20251215_002137_2398
+[0;32m  ✓ Contenedor creado exitosamente (ID: b03d63088932)[0m
+[2025-12-15 00:22:18] SUCCESS: Contenedor rabbitmq_3-management-alpine_20251215_002211_1493 creado (rabbitmq:3-management-alpine)
+[0;34m[8/10] Generando: busybox_unstable-uclibc_20251215_002219_9514[0m
+[2025-12-15 00:22:19] DB ERROR: No se pudo registrar contenedor rabbitmq_3-management-alpine_20251215_002211_1493
+[2025-12-15 00:22:19] Generando contenedor 8: busybox_unstable-uclibc_20251215_002219_9514 (Bajo consumo - busybox:unstable-uclibc)
+[0;34m[3/10] Generando: busybox_unstable-uclibc_20251215_002219_7664[0m
+[2025-12-15 00:22:19] Generando contenedor 3: busybox_unstable-uclibc_20251215_002219_7664 (Bajo consumo - busybox:unstable-uclibc)
+[0;32m  ✓ Contenedor creado exitosamente (ID: 152e880e9dce)[0m
+[2025-12-15 00:22:20] SUCCESS: Contenedor busybox_unstable-uclibc_20251215_002219_9514 creado (busybox:unstable-uclibc)
+[2025-12-15 00:22:20] DB ERROR: No se pudo registrar contenedor busybox_unstable-uclibc_20251215_002219_9514
+[0;32m  ✓ Contenedor creado exitosamente (ID: b4d3064685fe)[0m
+[2025-12-15 00:22:20] SUCCESS: Contenedor busybox_unstable-uclibc_20251215_002219_7664 creado (busybox:unstable-uclibc)
+[2025-12-15 00:22:20] DB ERROR: No se pudo registrar contenedor busybox_unstable-uclibc_20251215_002219_7664
+[0;34m[9/10] Generando: rabbitmq_3-management-alpine_20251215_002220_752[0m
+[2025-12-15 00:22:20] Generando contenedor 9: rabbitmq_3-management-alpine_20251215_002220_752 (Alto consumo - rabbitmq:3-management-alpine)
+[0;34m[4/10] Generando: busybox_unstable-uclibc_20251215_002221_4946[0m
+[2025-12-15 00:22:21] Generando contenedor 4: busybox_unstable-uclibc_20251215_002221_4946 (Bajo consumo - busybox:unstable-uclibc)
+[0;32m  ✓ Contenedor creado exitosamente (ID: b380e45090af)[0m
+[2025-12-15 00:22:23] SUCCESS: Contenedor rabbitmq_3-management-alpine_20251215_002220_752 creado (rabbitmq:3-management-alpine)
+[0;32m  ✓ Contenedor creado exitosamente (ID: a7bc8963be04)[0m
+[2025-12-15 00:22:23] DB ERROR: No se pudo registrar contenedor rabbitmq_3-management-alpine_20251215_002220_752
+[2025-12-15 00:22:23] SUCCESS: Contenedor busybox_unstable-uclibc_20251215_002221_4946 creado (busybox:unstable-uclibc)
+[2025-12-15 00:22:23] DB ERROR: No se pudo registrar contenedor busybox_unstable-uclibc_20251215_002221_4946
+[0;34m[10/10] Generando: memcached_alpine_20251215_002223_6899[0m
+[2025-12-15 00:22:23] Generando contenedor 10: memcached_alpine_20251215_002223_6899 (Alto consumo - memcached:alpine)
+[0;34m[5/10] Generando: memcached_alpine_20251215_002223_9559[0m
+[2025-12-15 00:22:23] Generando contenedor 5: memcached_alpine_20251215_002223_9559 (Alto consumo - memcached:alpine)
+[0;32m  ✓ Contenedor creado exitosamente (ID: 6bf06c3134fa)[0m
+[2025-12-15 00:22:26] SUCCESS: Contenedor memcached_alpine_20251215_002223_6899 creado (memcached:alpine)
+[0;32m  ✓ Contenedor creado exitosamente (ID: 2f6899907f58)[0m
+[2025-12-15 00:22:26] DB ERROR: No se pudo registrar contenedor memcached_alpine_20251215_002223_6899
+[2025-12-15 00:22:26] SUCCESS: Contenedor memcached_alpine_20251215_002223_9559 creado (memcached:alpine)
+[2025-12-15 00:22:26] DB ERROR: No se pudo registrar contenedor memcached_alpine_20251215_002223_9559
+[0;34m[6/10] Generando: rabbitmq_3-management-alpine_20251215_002227_2043[0m
+[2025-12-15 00:22:27] Generando contenedor 6: rabbitmq_3-management-alpine_20251215_002227_2043 (Alto consumo - rabbitmq:3-management-alpine)
+[0;32m  ✓ Contenedor creado exitosamente (ID: 71501aef918a)[0m
+[2025-12-15 00:22:29] SUCCESS: Contenedor rabbitmq_3-management-alpine_20251215_002227_2043 creado (rabbitmq:3-management-alpine)
+[2025-12-15 00:22:29] DB ERROR: No se pudo registrar contenedor rabbitmq_3-management-alpine_20251215_002227_2043
+
+[0;32m==========================================[0m
+[0;32m  Resumen de Generación[0m
+[0;32m==========================================[0m
+[0;32mContenedores creados: 10/10[0m
+[0;34mTotal después de generar: 18[0m
+[0;34mAlto consumo: 9/10[0m
+[0;34mBajo consumo: 9/13[0m
+
+[1;33mVerificando límites después de generar...[0m
+[0;34m[7/10] Generando: nginx_trixie-perl_20251215_002230_9544[0m
+[2025-12-15 00:22:30] Generando contenedor 7: nginx_trixie-perl_20251215_002230_9544 (Bajo consumo - nginx:trixie-perl)
+[0;32m  ✓ Contenedor creado exitosamente (ID: e26ab0a2b213)[0m
+[2025-12-15 00:22:32] SUCCESS: Contenedor nginx_trixie-perl_20251215_002230_9544 creado (nginx:trixie-perl)
+[2025-12-15 00:22:33] DB ERROR: No se pudo registrar contenedor nginx_trixie-perl_20251215_002230_9544
+[0;34m[8/10] Generando: nginx_trixie-perl_20251215_002233_2564[0m
+[2025-12-15 00:22:33] Generando contenedor 8: nginx_trixie-perl_20251215_002233_2564 (Bajo consumo - nginx:trixie-perl)
+
+[0;32m==========================================[0m
+[0;32m  Estado Final[0m
+[0;32m==========================================[0m
+[0;34mTotal final: 20[0m
+[0;34mAlto consumo: 10/10[0m
+[0;34mBajo consumo: 10/13[0m
+[2025-12-15 00:22:34] === Fin ciclo 1: 10 creados, 0 eliminados ===
+[2025-12-15 00:22:34] === Estado final: Total=20, Alto=10, Bajo=10 ===
+
+[0;34mPara ver los contenedores: docker ps[0m
+[0;34mPara ver estadísticas: docker stats[0m
+[0;34mPara detener: Ctrl+C[0m
+
+[1;33m⏳ Esperando 60 segundos hasta el próximo ciclo...[0m
+[0;32m  ✓ Contenedor creado exitosamente (ID: 9ef97e544ed2)[0m
+[2025-12-15 00:22:36] SUCCESS: Contenedor nginx_trixie-perl_20251215_002233_2564 creado (nginx:trixie-perl)
+[2025-12-15 00:22:36] DB ERROR: No se pudo registrar contenedor nginx_trixie-perl_20251215_002233_2564
+[0;34m[9/10] Generando: memcached_alpine_20251215_002236_1925[0m
+[2025-12-15 00:22:36] Generando contenedor 9: memcached_alpine_20251215_002236_1925 (Alto consumo - memcached:alpine)
+[0;32m  ✓ Contenedor creado exitosamente (ID: 9e6ddde6dc08)[0m
+[2025-12-15 00:22:39] SUCCESS: Contenedor memcached_alpine_20251215_002236_1925 creado (memcached:alpine)
+[2025-12-15 00:22:39] DB ERROR: No se pudo registrar contenedor memcached_alpine_20251215_002236_1925
+[0;34m[10/10] Generando: memcached_alpine_20251215_002240_3030[0m
+[2025-12-15 00:22:40] Generando contenedor 10: memcached_alpine_20251215_002240_3030 (Alto consumo - memcached:alpine)
+[0;32m  ✓ Contenedor creado exitosamente (ID: 51cc193c01af)[0m
+[2025-12-15 00:22:41] SUCCESS: Contenedor memcached_alpine_20251215_002240_3030 creado (memcached:alpine)
+[2025-12-15 00:22:41] DB ERROR: No se pudo registrar contenedor memcached_alpine_20251215_002240_3030
